@@ -11,13 +11,13 @@ First things first, I hear neural networks (NNs) need training data.
 I think I want the MNIST handwritten digits; I've been told it's the `"Hello World!"` of NNs.
 But when I went to go find it, I was immediately hit with some library bullshit.
 
-<img src="./image/01/huggingface.png" width=300/>
-<img src="./image/01/microsoft.png" width=300/>
+<img src="./image/01/huggingface.png" width=40%/>
+<img src="./image/01/microsoft.png" width=40%/>
 
 
 Nonetheless, some light searching got me to the [raw files](https://github.com/cvdfoundation/mnist) (don't you just love the words "raw files"?), but it appears I can't quite decipher them...they're like, straight-up binary or something?
 
-<img src="./image/01/textedit.png" width=300/>
+<img src="./image/01/textedit.png" width=60%/>
 
 So TextEdit (macOS default text editor) isn't really a true fiend who looks at raw files with hex or binary encoding.
 It's gonna want to use something woke, like UTF-8 or UTF-16.
@@ -26,7 +26,7 @@ A `5.4 MB` app—pretty cool.
 Now I can open the dataset and see a bunch of hex numbers!
 And if I remove the header and scale my window just right...
 
-<img src="./image/01/hexedit.png" width=300/>
+<img src="./image/01/hexedit.png" width=50%/>
 
 There are my numbers!
 What is four bytes called? I think I'll call it a chomp.
@@ -54,13 +54,13 @@ And it's working without them, so I guess C reads in big-Endian when it's readin
 The good news is, these `unsigned char`s actually have addition and multiplication built-in—C knows that we're going to use its types for more than just strings. Also, I can now read a full image (784 bytes) onto my buffer.
 This is the "retina", the first layer of neurons!
 
-<imc src="./image/02/compare.png"/>
+<img src="./image/02/compare.png" width=80%/>
 
 Next, we need more "layers" in order to fill out our structure.
 Then, like in any good C project, we pass the data onto a team of wizards who discover patterns using reflections in the Orb of Linear Algebra.
 Finally, the wizards grant us the result in the form of "confidence" probabilities for each digit 0 through 9.
 
-<img src="./image/02/roadmap.png"/>
+<img src="./image/02/roadmap.png" width=100%/>
 
 Hence, the next step is to forge the Orb itself and implement matrices in C.
 It's a pain, but I'm hardcoding the different sizes of the vectors and matrices so that I can store them faster.
