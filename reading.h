@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include <stdio.h>
+#include "./matrix.h"
 
 unsigned char endian_swap(unsigned char x) {
     return (x>>24) | ((x<<8) & 0x00FF0000) | ((x>>8) & 0x0000FF00) | (x<<24);
@@ -25,20 +26,13 @@ int show_retina(unsigned char buffer[784]) {
     return 0;
 }
 
-int main() {
+InputVector get_one_input() {
     FILE *file;
     file = fopen("./training*", "rb");
-    unsigned char buffer[784] = {0};
-    if (get_header(file, buffer) != 0) { return -1; }
-
-    burn_retina(file, buffer);
-    show_retina(buffer);
-
-    burn_retina(file, buffer);
-    show_retina(buffer);
-
-
+    InputVector output;
+    get_header(file, output.data);
+    burn_retina(file, output.data);
     fclose(file);
-    return 0;
+    return output;
 }
 

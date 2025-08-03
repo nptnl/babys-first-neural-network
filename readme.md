@@ -1,6 +1,9 @@
 Alright so it looks like I'm gonna have to go see about what it is all the kids are talking about in 2025.
 
-**the goal:** to make a "neural network" with my bare hands and no libraries.
+**the goal:** to make a "neural network" with my bare hands and C  with no libraries.
+
+**disclaimer:** I'm not counting `stdio.h` as an import.
+Nothing else, though.
 
 ### Day 1:
 
@@ -8,13 +11,13 @@ First things first, I hear neural networks (NNs) need training data.
 I think I want the MNIST handwritten digits; I've been told it's the `"Hello World!"` of NNs.
 But when I went to go find it, I was immediately hit with some library bullshit.
 
-<img src="./01-huggingface.png" width=300/>
-<img src="./01-microsoft.png" width=300/>
+<img src="./image/01/huggingface.png" width=300/>
+<img src="./image/01/microsoft.png" width=300/>
 
 
 Nonetheless, some light searching got me to the [raw files](https://github.com/cvdfoundation/mnist) (don't you just love the words "raw files"?), but it appears I can't quite decipher them...they're like, straight-up binary or something?
 
-<img src="./01-textedit.png" width=300/>
+<img src="./image/01/textedit.png" width=300/>
 
 So TextEdit (macOS default text editor) isn't really a true fiend who looks at raw files with hex or binary encoding.
 It's gonna want to use something woke, like UTF-8 or UTF-16.
@@ -23,7 +26,7 @@ A `5.4 MB` app—pretty cool.
 Now I can open the dataset and see a bunch of hex numbers!
 And if I remove the header and scale my window just right...
 
-<img src="./01-hexedit.png" width=300/>
+<img src="./image/01/hexedit.png" width=300/>
 
 There are my numbers!
 What is four bytes called? I think I'll call it a chomp.
@@ -48,5 +51,17 @@ Basically, I was reading my training data into a buffer of `int`egers, but that'
 Also remember those bitshifts for changing the endianness?
 I shot myself in the foot there—it's not the same for `unsigned char` numbers.
 And it's working without them, so I guess C reads in big-Endian when it's reading into `unsigned char`.
-The good news is, I can now read a full image (784 bytes) onto my buffer.
+The good news is, these `unsigned char`s actually have addition and multiplication built-in—C knows that we're going to use its types for more than just strings. Also, I can now read a full image (784 bytes) onto my buffer.
 This is the "retina", the first layer of neurons!
+
+<imc src="./image/02/compare.png"/>
+
+Next, we need more "layers" in order to fill out our structure.
+Then, like in any good C project, we pass the data onto a team of wizards who discover patterns using reflections in the Orb of Linear Algebra.
+Finally, the wizards grant us the result in the form of "confidence" probabilities for each digit 0 through 9.
+
+<img src="./image/02/roadmap.png"/>
+
+Hence, the next step is to forge the Orb itself and implement matrices in C.
+It's a pain, but I'm hardcoding the different sizes of the vectors and matrices so that I can store them faster.
+Nonetheless, it works...
