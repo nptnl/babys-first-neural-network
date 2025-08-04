@@ -86,7 +86,7 @@ unsigned char add(unsigned char lhs, unsigned char rhs) {
 unsigned char mul(unsigned char lhs, unsigned char rhs) {
     unsigned short product = lhs * rhs;
     return product >> 8;
-    // short >> 8 is just its first (bigger) byte
+    // short >> 8 is just its first (most significant) byte
 }
 ```
 Now I have a working neural network, which solves some unknown and useless problem.
@@ -107,3 +107,13 @@ For my first processing, though, I just calibrated the weights such that I wasn'
 
 Look at that!
 We can peer into the hidden layers and see what's lighting up!
+And guess what?
+I'm now calculating gradients for all the layers and edgeweights, and I've got the infrastructure to modify the network according to the gradient!
+
+**problem:** The judgement is converging to a bunch of 0xFF.
+Remember that the `unsigned char` can't be negative?
+Well that means my gradients are all positive, and my edgweights just keep going up...
+
+**problem 2:** I'm worried
+
+### Day 4:

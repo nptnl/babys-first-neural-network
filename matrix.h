@@ -137,3 +137,28 @@ Matrix10 funky10() {
     }
     return matrix;
 }
+
+Matrix64 readd_m64(Matrix64 current, Matrix64 gradient) {
+    for (int a = 0; a < 784; a++) {
+        for (int b = 0; b < 64; b++) {
+            current.data[a][b] = add(current.data[a][b], gradient.data[a][b]);
+        }
+    }
+    return current;
+}
+Matrix32 readd_m32(Matrix32 current, Matrix32 gradient) {
+    for (int a = 0; a < 64; a++) {
+        for (int b = 0; b < 32; b++) {
+            current.data[a][b] = add(current.data[a][b], gradient.data[a][b]);
+        }
+    }
+    return current;
+}
+Matrix10 readd_m10(Matrix10 current, Matrix10 gradient) {
+    for (int a = 0; a < 32; a++) {
+        for (int b = 0; b < 10; b++) {
+            current.data[a][b] = add(current.data[a][b], gradient.data[a][b]);
+        }
+    }
+    return current;
+}
