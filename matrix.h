@@ -1,4 +1,5 @@
 #include <stdio.h>
+#pragma once
 
 unsigned char add(unsigned char lhs, unsigned char rhs) {
     unsigned short sum = lhs + rhs;
@@ -101,6 +102,37 @@ Matrix10 identity10() {
         for (int b = 0; b < 10; b++) {
             if (a == b) { matrix.data[a][b] = 0x1; }
             else { matrix.data[a][b] = 0x0; }
+        };
+    }
+    return matrix;
+}
+
+Matrix64 funky64() {
+    Matrix64 matrix;
+    for (int a = 0; a < 784; a++) {
+        for (int b = 0; b < 64; b++) {
+            if ((a + b) % 700 == 0) { matrix.data[a][b] = 0x3F; }
+            else { matrix.data[a][b] = 0x00; }
+        };
+    }
+    return matrix;
+}
+Matrix32 funky32() {
+    Matrix32 matrix;
+    for (int a = 0; a < 64; a++) {
+        for (int b = 0; b < 32; b++) {
+            if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x3F; }
+            else { matrix.data[a][b] = 0x00; }
+        };
+    }
+    return matrix;
+}
+Matrix10 funky10() {
+    Matrix10 matrix;
+    for (int a = 0; a < 32; a++) {
+        for (int b = 0; b < 10; b++) {
+            if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x3F; }
+            else { matrix.data[a][b] = 0x00; }
         };
     }
     return matrix;

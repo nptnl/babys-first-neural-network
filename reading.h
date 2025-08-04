@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "./matrix.h"
+#include "matrix.h"
+#include "printing.h"
 
 unsigned char endian_swap(unsigned char x) {
     return (x>>24) | ((x<<8) & 0x00FF0000) | ((x>>8) & 0x0000FF00) | (x<<24);
@@ -22,16 +23,6 @@ int peek_label(FILE *input, unsigned char out[1]) {
     return 0;
 }
 
-int show_retina(unsigned char buffer[784]) {
-    for (int i = 0; i < 28; i++) {
-        for (int j = 0; j < 28; j++) {
-            if (buffer[28 * i + j] == 0x0) { printf("  "); }
-            else { printf("%X", buffer[28*i+j]); }
-        }
-        printf("\n");
-    }
-    return 0;
-}
 
 typedef struct {
     Vector784 image;
@@ -53,4 +44,3 @@ ImageAndLabel get_one_input() {
     fclose(label);
     return output;
 }
-

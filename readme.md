@@ -1,6 +1,7 @@
 Alright so it looks like I'm gonna have to go see about what it is all the kids are talking about in 2025.
 
 **the goal:** to make a "neural network" with my bare hands and C  with no libraries.
+I'll basically be re-creating the example used by [3blue1brown](https://www.youtube.com/@3blue1brown).
 
 **disclaimer:** I'm not counting `stdio.h` as an import.
 Nothing else, though.
@@ -92,6 +93,17 @@ Now I have a working neural network, which solves some unknown and useless probl
 I need to get the wizards to train our network to solve the problem we *want*, namely reading numbers.
 To do this, we need a **cost function** and some way to differentiate that cost function in many dimensions, for the **gradient**.
 
-The easiest cost function I can come up with is to square all the confidence in wrong answers and square all the lack of confidence in the answer.
-Unfortunately, even though our single-byte arithmetic is really cool, we need the cost function to be really precise in order to find derivatives.
-But we only need to calculate the cost once per image so it's fine to use a `float`.
+I just thought of something—there's a few more problems with our tiny datatype.
+- They can't do negative edgeweights, so they're all gonna have to be nonnegative.
+- With my multiplication, it's pretty easy to get 0x00, so there might not be enough "light" in the network, and we get a bunch of 0x00 as our result.
+- With my addition, it's pretty easy to get 0xFF, so there might be too much "light" and we get a bunch of 0xFE as our result.
+
+Will we have to switch to `float` like losers?
+If we do, you'll know that my GitHub account has been hacked, because I would never be a loser.
+For my first processing, though, I just calibrated the weights such that I wasn't stuck with 0x00 or 0xFF.
+
+<img src="./image/03/retina.png" width=50%/>
+<img src="./image/03/layer-peeking.png" width=30%/>
+
+Look at that!
+We can peer into the hidden layers and see what's lighting up!
