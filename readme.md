@@ -63,5 +63,35 @@ Finally, the wizards grant us the result in the form of "confidence" probabiliti
 <img src="./image/02/roadmap.png" width=100%/>
 
 Hence, the next step is to forge the Orb itself and implement matrices in C.
-It's a pain, but I'm hardcoding the different sizes of the vectors and matrices so that I can store them faster.
-Nonetheless, it works...
+It's a pain, but I'm hardcoding the different sizes of the vectors and matrices (known at compile-time) cause I think it will be faster than making an extendable type on the heap.
+
+### Day 3:
+
+Floating point numbers are for losers and babies and I'm going to make all the matrices run on `unsigned char` operations.
+These values describe the neuron activations and the connection weights between them, and they represent values in $ℝ[0, 1]$.
+So I'm using the `unsigned char` byte itself to represent some hexadecimal fraction between zero and one (like, 0xA1 is really 0x0.A1).
+
+You know how multiplying decimals works, where like $0.13 × 0.13 = 0.169$, where $13 × 13 = 169$?
+It's like that, but for hexadecimal.
+I deal with overflow by using a 16-bit `unsigned short`, twice as big as the 8-bit `unsigned char`.
+```c
+unsigned char add(unsigned char lhs, unsigned char rhs) {
+    unsigned short sum = lhs + rhs;
+    unsigned char out;
+    if (sum >> 8 == 0x0) { out = sum; }
+    else { out = 0xFF; // maximum value if too big }
+    return out;
+}
+unsigned char mul(unsigned char lhs, unsigned char rhs) {
+    unsigned short product = lhs * rhs;
+    return product >> 8;
+    // short >> 8 is just its first (bigger) byte
+}
+```
+Now I have a working neural network, which solves some unknown and useless problem.
+I need to get the wizards to train our network to solve the problem we *want*, namely reading numbers.
+To do this, we need a **cost function** and some way to differentiate that cost function in many dimensions, for the **gradient**.
+
+The easiest cost function I can come up with is to square all the confidence in wrong answers and square all the lack of confidence in the answer.
+Unfortunately, even though our single-byte arithmetic is really cool, we need the cost function to be really precise in order to find derivatives.
+But we only need to calculate the cost once per image so it's fine to use a `float`.
