@@ -2,10 +2,6 @@
 #include "matrix.h"
 #include "printing.h"
 
-unsigned char endian_swap(unsigned char x) {
-    return (x>>24) | ((x<<8) & 0x00FF0000) | ((x>>8) & 0x0000FF00) | (x<<24);
-}
-
 int get_headers(FILE *train, FILE *label) {
     unsigned char train_head[16];
     unsigned char label_head[8];

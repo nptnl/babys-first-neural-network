@@ -1,15 +1,20 @@
 #include <stdio.h>
 #pragma once
 
-unsigned char add(unsigned char lhs, unsigned char rhs) {
-    unsigned short sum = lhs + rhs;
-    unsigned char out;
-    if (sum >> 8 == 0x0) { out = sum; }
-    else { out = 0xFF; }
+char add(char lhs, char rhs) {
+    short sum = lhs + rhs;
+    char out;
+    if (sum >> 8 > 0x0) { out = 0x7F; }
+    else if (sum >> 8 < 0x0) { out = -0x7F; }
+    else { out = sum; }
     return out;
 }
-unsigned char mul(unsigned char lhs, unsigned char rhs) {
-    unsigned short product = lhs * rhs;
+char mul(char lhs, char rhs) {
+    short product = lhs * rhs;
+    return product >> 8;
+}
+char mul_retina(unsigned char neuron, char weight) {
+    short product = neuron * weight;
     return product >> 8;
 }
 
@@ -18,23 +23,23 @@ typedef struct {
     unsigned char data[784];
 } Vector784;
 typedef struct {
-    unsigned char data[64];
+    char data[64];
 } Vector64;
 typedef struct {
-    unsigned char data[32];
+    char data[32];
 } Vector32;
 typedef struct {
-    unsigned char data[10];
+    char data[10];
 } Vector10;
 
 typedef struct {
-    unsigned char data[784][64];
+    char data[784][64];
 } Matrix64;
 typedef struct {
-    unsigned char data[64][32];
+    char data[64][32];
 } Matrix32;
 typedef struct {
-    unsigned char data[32][10];
+    char data[32][10];
 } Matrix10;
 
 
@@ -45,7 +50,7 @@ Vector64 lumen_one(Vector784 before, Matrix64 mapping) {
     }
     for (int a = 0; a < 64; a++) {
             for (int b = 0; b < 784; b++) {
-            after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[b][a]));
+            after.data[a] = add(after.data[a], mul_retina(before.data[b], mapping.data[b][a]));
         }
     }
     return after;

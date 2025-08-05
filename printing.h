@@ -2,16 +2,21 @@
 #include "matrix.h"
 #pragma once
 
-void plothex(unsigned char item) {
+void plothex(char item) {
+    if (item > 0x00) { printf(" %02X ", item); }
+    else if (item < 0x00) { printf("-%02X ", item); }
+    else { printf("    "); }
+}
+
+void plothex_retina(unsigned char item) {
     if (item == 0x0) { printf("  "); }
-    else if (item < 0x10) { printf("0%X", item); }
-    else { printf("%X", item); }
+    else { printf("%02X", item); }
 }
 
 void show_retina(Vector784 layer) {
     for (int i = 0; i < 28; i++) {
         for (int j = 0; j < 28; j++) {
-            plothex(layer.data[28*i + j]);
+            plothex_retina(layer.data[28*i + j]);
         }
         printf("\n");
     }
@@ -34,7 +39,7 @@ void show_hidden2(Vector32 layer) {
 }
 void display_judgement(Vector10 layer) {
     for (int a = 0; a < 10; a ++) {
-        printf("%d | %X\n", a, layer.data[a]);
+        printf("%d | %d\n", a, layer.data[a]);
     }
 }
 

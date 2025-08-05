@@ -1,3 +1,5 @@
+# Baby's First Neural Network
+
 Alright so it looks like I'm gonna have to go see about what it is all the kids are talking about in 2025.
 
 **the goal:** to make a "neural network" with my bare hands and C  with no libraries.
@@ -114,6 +116,32 @@ I'm now calculating gradients for all the layers and edgeweights, and I've got t
 Remember that the `unsigned char` can't be negative?
 Well that means my gradients are all positive, and my edgweights just keep going up...
 
-**problem 2:** I'm worried
-
 ### Day 4:
+
+I need negative numbers.
+Will I rejoin **society** and use a `float`?
+Of course not.
+That would require 32 bits instead of just 8.
+And I didn't implement floating point numbers by myself (I'll do that later).
+
+**the plan:** 
+One option is just a signed `char` type.
+It's still super small and fast (the same 1 byte), but one of the bits is a sign.
+The only problem here is that we're taking away a bit from the number,
+```c
+unsigned char usgn_min = 0x00; char sgn_min = -0x7F;
+unsigned char usgn_max = 0xFF; char sgn_max =  0x7F;
+```
+and I think it would cause problems if we interpreted the unsigned input as negative numbers.
+But if I were to keep the retina `unsigned`, but make some new operations such that the edges and the other layers are all `signed`, I might sidestep the issue.
+Nonetheless, this isn't without downsides—my 0xFF problem is about to become a 0x7F problem.
+
+I was wrong!
+After changing all my `unsigned char`s into `chars`, I **don't** have a 0x7F problem—I have a -0x7F problem!
+Or, as C's printing mechanism likes to call it, a 0xFFFFFF80 problem!
+Yeah, whenever you print in hex with `"%X"`, C assumes the input is an `int` and not one byte, so you get extra data.
+Took me a long time to figure that one out.
+Thanks, C!
+So I print my judgements as decimal numbers with `"%d"` now.
+
+<img src="image/04/negative127.png" width=50%>

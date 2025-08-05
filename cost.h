@@ -1,19 +1,9 @@
 #include "reading.h"
 
-float cost(Vector10 output, unsigned char answer) {
-    float total = 0.0;
-    for (int a = 0; a < 10; a ++) {
-        float floatized = output.data[a];
-        if (a == answer) { total += (1.0 - floatized) * (1.0 - floatized); }
-        else { total += floatized * floatized; }
-    }
-    return total;
-}
-
 Vector10 diff_judgement(Vector10 judgement, unsigned char answer) {
     Vector10 out;
     for (int a = 0; a < 10; a ++) {
-        if (a == answer) { out.data[a] = -judgement.data[a] - 0x01; }
+        if (a == answer) { out.data[a] = 0x7F - judgement.data[a]; }
         else { out.data[a] = judgement.data[a]; }
     }
     return out;
