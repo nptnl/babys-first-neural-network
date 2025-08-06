@@ -145,3 +145,30 @@ Thanks, C!
 So I print my judgements as decimal numbers with `"%d"` now.
 
 <img src="image/04/negative127.png" width=50%>
+
+### Day 5:
+
+All right!
+Our -0x7F problem is solved!
+I just, uh... made my `char` addition wrong...
+```c
+char add(char lhs, char rhs) {
+    short sum = lhs + rhs;
+    char out;
+    if (sum > 0x7F) { out = 0x7F; }
+    else if (sum < -0x7F) { out = -0x7F; }
+    else { out = sum; }
+    return out;
+}
+```
+But now it's all better!
+In fact, I can track my network "learning" very slowly now (and not immediately pushing the output to -127).
+
+<img src="image/05/lumen3.png" width="100%">
+
+I call my $32 → 10$ matrix Lumen Three, and the others Lumen One and Lumen Two.
+I just thought they needed names, and I like the idea of the matrices filtering the "light" through the layers of the network.
+
+I'm getting close; I can feel it.
+Right now, however, as seen in the screenshot, my network isn't actually outputting 5 like I want it to.
+Its training converges in some random negative value (but not the minimum) for every digit.

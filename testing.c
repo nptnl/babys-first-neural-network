@@ -11,16 +11,11 @@ typedef struct {
 
 Network train(Network current, Vector784 retina, unsigned char answer) {
 
-    Vector10 judgement;
-
-    for (int a = 0; a < 10000; a ++) {
+    for (int a = 0; a < 10; a ++) {
     // forward propagation
     Vector64 hidden1 = lumen_one(retina, current.lumen1);
     Vector32 hidden2 = lumen_two(hidden1, current.lumen2);
-    judgement = lumen_three(hidden2, current.lumen3);
-
-    //     printf("------ Old Lumen Three ------\n");
-    // show_lumen3(current.lumen3);
+    Vector10 judgement = lumen_three(hidden2, current.lumen3);
 
     // backward propagation
     Vector10 grad_judgement = diff_judgement(judgement, answer);
@@ -30,28 +25,34 @@ Network train(Network current, Vector784 retina, unsigned char answer) {
     Vector64 grad_hidden1 = diff_hidden1(current.lumen2, hidden2);
     Matrix64 grad_lumen1 = diff_lumen_one(retina, grad_hidden1);
 
+    if (a % 1 == 0) {
+    printf("----- judgement ------\n");
+    display_judgement(judgement);
+        printf("----- Lumen Three ------\n");
+    show_lumen3(current.lumen3);
+    }
+
     // readjust weights
     current.lumen1 = readd_m64(current.lumen1, grad_lumen1);
     current.lumen2 = readd_m32(current.lumen2, grad_lumen2);
     current.lumen3 = readd_m10(current.lumen3, grad_lumen3);
 
-    if (a % 1000 == 0) {
-    printf("------ iteration %d ------\n", a);
-    display_judgement(judgement);
     }
-    }
-    // printf("------ ∇ Judgement ------\n");
-    // display_judgement(grad_judgement);
-    // printf("------ ∇ Lumen Three ------\n");
-    // show_lumen3(grad_lumen3);
-    // printf("------ New Lumen Three ------\n");
-    // show_lumen3(current.lumen3);
 
     return current;
 }
 
 
-#include <limits.h>
+void test() {
+    char x = 0x60;
+    char y = 0x30;
+    plothex(mul(x, y));
+    plothex(add(x, y));
+}
+
+// .30 × .20
+// .06
+
 
 int main() {
     
@@ -62,18 +63,8 @@ int main() {
 
     ImageAndLabel input = get_one_input();
 
-    train(baby, input.image, input.label);
+    baby = train(baby, input.image, input.label);
 
-    // char x = 0x30;
-    // char y = 0x70;
-    // printf("x = %d\n", x);
-    // printf("-x = %d\n", -x);
-    // printf("y = %02X\n", y);
-    // printf("x+y = %02X\n", (char)(x + y));
-    // printf("add x y = %02X\n", add(x, y));
-    // printf("x-y = %02X\n", x - y);
-    // printf("add x -y = %02X\n", add(x, -y));
-
+    // test();
     return 0;
 }
-

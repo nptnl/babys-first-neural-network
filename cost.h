@@ -1,10 +1,20 @@
 #include "reading.h"
 
+
+// judgement cost
+// if answer: we should be at 0x7F
+// judge cost is (0x7F - j)²
+// -dvt is 2 (0x7F - j)
+// if not: we should be at zero
+// judge cost is j²
+// -dvt = -2j
+
+
 Vector10 diff_judgement(Vector10 judgement, unsigned char answer) {
     Vector10 out;
     for (int a = 0; a < 10; a ++) {
         if (a == answer) { out.data[a] = 0x7F - judgement.data[a]; }
-        else { out.data[a] = judgement.data[a]; }
+        else { out.data[a] = -judgement.data[a]; }
     }
     return out;
 }
