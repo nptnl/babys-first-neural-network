@@ -153,10 +153,11 @@ Our -0x7F problem is solved!
 I just, uh... made my `char` addition wrong...
 ```c
 char add(char lhs, char rhs) {
+    // this is the correct addition now don't worry
     short sum = lhs + rhs;
     char out;
-    if (sum > 0x7F) { out = 0x7F; }
-    else if (sum < -0x7F) { out = -0x7F; }
+    if (sum > 0x7F) { out = 0x7F; } // cap the positive numbers
+    else if (sum < -0x7F) { out = -0x7F; } // cap the negative numbers
     else { out = sum; }
     return out;
 }
@@ -172,3 +173,10 @@ I just thought they needed names, and I like the idea of the matrices filtering 
 I'm getting close; I can feel it.
 Right now, however, as seen in the screenshot, my network isn't actually outputting 5 like I want it to.
 Its training converges in some random negative value (but not the minimum) for every digit.
+
+I just arbitrarily changed the initial Lumens and... it just worked **it just worked** it just trained itself it just **trained and like** it did the
+
+<img src="image/05/five.png" width=60%>
+
+I mean, it's not doing particularly well, but it *does* seem like there is a *preference* for the number 5 here—which is the goal.
+I'm training it to tell me "five! hooray!" everytime.

@@ -13,7 +13,7 @@
 Vector10 diff_judgement(Vector10 judgement, unsigned char answer) {
     Vector10 out;
     for (int a = 0; a < 10; a ++) {
-        if (a == answer) { out.data[a] = 0x7F - judgement.data[a]; }
+        if (a == answer) { out.data[a] = add(0x7F, -judgement.data[a]); }
         else { out.data[a] = -judgement.data[a]; }
     }
     return out;

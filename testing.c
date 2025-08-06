@@ -11,7 +11,7 @@ typedef struct {
 
 Network train(Network current, Vector784 retina, unsigned char answer) {
 
-    for (int a = 0; a < 10; a ++) {
+    for (int a = 0; a < 10000; a ++) {
     // forward propagation
     Vector64 hidden1 = lumen_one(retina, current.lumen1);
     Vector32 hidden2 = lumen_two(hidden1, current.lumen2);
@@ -25,9 +25,11 @@ Network train(Network current, Vector784 retina, unsigned char answer) {
     Vector64 grad_hidden1 = diff_hidden1(current.lumen2, hidden2);
     Matrix64 grad_lumen1 = diff_lumen_one(retina, grad_hidden1);
 
-    if (a % 1 == 0) {
+    if (a % 1000 == 0) {
     printf("----- judgement ------\n");
     display_judgement(judgement);
+    printf("------ ∇ judgement ------\n");
+    display_judgement(grad_judgement);
         printf("----- Lumen Three ------\n");
     show_lumen3(current.lumen3);
     }
@@ -44,10 +46,13 @@ Network train(Network current, Vector784 retina, unsigned char answer) {
 
 
 void test() {
-    char x = 0x60;
+    char x = -0x60;
     char y = 0x30;
-    plothex(mul(x, y));
-    plothex(add(x, y));
+    plothex(x);
+    plothex(x >> 1);
+    plothex(x >> 2);
+    plothex(x >> 3);
+    plothex(x >> 4);
 }
 
 // .30 × .20

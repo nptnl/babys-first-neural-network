@@ -116,7 +116,7 @@ Matrix64 funky64() {
     Matrix64 matrix;
     for (int a = 0; a < 784; a++) {
         for (int b = 0; b < 64; b++) {
-            if ((a + b) % 700 == 0) { matrix.data[a][b] = 0x3F; }
+            if ((a + b) % 500 == 0) { matrix.data[a][b] = 0x4F; }
             else { matrix.data[a][b] = 0x00; }
         };
     }
@@ -126,8 +126,8 @@ Matrix32 funky32() {
     Matrix32 matrix;
     for (int a = 0; a < 64; a++) {
         for (int b = 0; b < 32; b++) {
-            if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x3F; }
-            else { matrix.data[a][b] = 0x00; }
+            if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x4F; }
+            else { matrix.data[a][b] = 0x03; }
         };
     }
     return matrix;
@@ -136,8 +136,8 @@ Matrix10 funky10() {
     Matrix10 matrix;
     for (int a = 0; a < 32; a++) {
         for (int b = 0; b < 10; b++) {
-            if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x3F; }
-            else { matrix.data[a][b] = 0x00; }
+            if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x5F; }
+            else { matrix.data[a][b] = 0x20; }
         };
     }
     return matrix;
