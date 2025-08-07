@@ -180,3 +180,21 @@ I just arbitrarily changed the initial Lumens and... it just worked **it just wo
 
 I mean, it's not doing particularly well, but it *does* seem like there is a *preference* for the number 5 here—which is the goal.
 I'm training it to tell me "five! hooray!" everytime.
+
+### Day 6:
+
+You know, I really don't know what to do next here.
+I've got it training, and giving a definite (stronger than before) preference for 5, but I don't have any ideas on how to make it closer to the desired output.
+It should get to 127 for five and 0 for the others, right?
+I've been told I need some **nonlinearity**.
+When looking at a bunch of neurons and matrices, if you think about it, we really only have a big linear mapping, right?
+And our learning can only go so far being a linear mapping.
+So usually people run some simple function like this
+$$\text{"ReLU"}\ \ :\ \ f(x) = \max(0, x)$$
+on every neuron.
+This way, the "brain" can access a much wider range of functions which aren't linear.
+
+But in theory, I should already have nonlinearity, right?
+Because my modified addition basically runs $f(x) = \max(-127, x)$ and $f(x) = \min(127, x)$.
+But maybe I need more.
+I don't know.

@@ -28,10 +28,10 @@ Network train(Network current, Vector784 retina, unsigned char answer) {
     if (a % 1000 == 0) {
     printf("----- judgement ------\n");
     display_judgement(judgement);
-    printf("------ ∇ judgement ------\n");
-    display_judgement(grad_judgement);
-        printf("----- Lumen Three ------\n");
-    show_lumen3(current.lumen3);
+    // printf("------ ∇ judgement ------\n");
+    // display_judgement(grad_judgement);
+    //     printf("----- Lumen Three ------\n");
+    // show_lumen3(current.lumen3);
     }
 
     // readjust weights

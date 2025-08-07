@@ -1,13 +1,9 @@
 #include "reading.h"
 
 
-// judgement cost
-// if answer: we should be at 0x7F
-// judge cost is (0x7F - j)²
-// -dvt is 2 (0x7F - j)
-// if not: we should be at zero
-// judge cost is j²
-// -dvt = -2j
+// all the functions here take the gradient of various parts
+// the chain rule tells us that the gradient of a neuron layer is the gradient of the NEXT layer times the sum of all effects of our neuron on the next layer
+// the gradient of the edgeweights is the gradient of next neuron layer times the actual activations of previous neuron layer
 
 
 Vector10 diff_judgement(Vector10 judgement, unsigned char answer) {
