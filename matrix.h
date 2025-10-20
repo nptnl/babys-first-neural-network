@@ -22,7 +22,7 @@ char mul(char lhs, char rhs) {
 // special multiplication because retina neurons are different type
 char mul_retina(unsigned char neuron, char weight) {
     short product = neuron * weight;
-    return product >> 8;
+    return product >> 9;
 }
 
 // the neuron layer structures
@@ -45,112 +45,111 @@ typedef struct {
 
 // matrix for edgeweights retina → hidden1
 typedef struct {
-    char data[784][64];
+    char data[64][784];
 } Matrix64;
 // matrix for edgeweights hidden1 → hidden2
 typedef struct {
-    char data[64][32];
+    char data[32][64];
 } Matrix32;
 // matrix for edgeweights hidden2 → judgement
 typedef struct {
-    char data[32][10];
+    char data[10][32];
 } Matrix10;
 
 // next three functions are just matrix multiplication at different scales
 Vector64 lumen_one(Vector784 before, Matrix64 mapping) {
     Vector64 after;
-    for (int a = 0; a < 64; a ++) {
-        after.data[a] = 0x0;
-    }
     for (int a = 0; a < 64; a++) {
-            for (int b = 0; b < 784; b++) {
-            after.data[a] = add(after.data[a], mul_retina(before.data[b], mapping.data[b][a]));
+        after.data[a] = 0x0;
+        for (int b = 0; b < 784; b++) {
+            after.data[a] = add(after.data[a], mul_retina(before.data[b], mapping.data[a][b]));
         }
-        // if (after.data[a] < 0x00) { after.data[a] = 0x00; }
+        if (after.data[a] < 0x00) { after.data[a] = 0x00; }
     }
     return after;
 }
 Vector32 lumen_two(Vector64 before, Matrix32 mapping) {
     Vector32 after;
-    for (int a = 0; a < 32; a ++) {
-        after.data[a] = 0x0;
-    }
     for (int a = 0; a < 32; a++) {
-            for (int b = 0; b < 64; b++) {
-            after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[b][a]));
+        after.data[a] = 0x0;
+        for (int b = 0; b < 64; b++) {
+            after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[a][b]));
         }
-        // if (after.data[a] < 0x00) { after.data[a] = 0x00; }
+        if (after.data[a] < 0x00) { after.data[a] = 0x00; }
     }
     return after;
 }
 Vector10 lumen_three(Vector32 before, Matrix10 mapping) {
     Vector10 after;
-    for (int a = 0; a < 10; a ++) {
-        after.data[a] = 0x0;
-    }
     for (int a = 0; a < 10; a++) {
-            for (int b = 0; b < 32; b++) {
-            after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[b][a]));
+        after.data[a] = 0x0;
+        for (int b = 0; b < 32; b++) {
+            after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[a][b]));
         }
-        // if (after.data[a] < 0x00) { after.data[a] = 0x00; }
+        if (after.data[a] < 0x00) { after.data[a] = 0x00; }
     }
     return after;
 }
 
-// these add a scaled-down (bitshifted) gradient to the edgeweights in the matrices
+static char LEARNRATE = 0x60;
+
+// these add a scaled-down gradient to the edgeweights in the matrices
 Matrix64 readd_m64(Matrix64 current, Matrix64 gradient) {
-    for (int a = 0; a < 784; a++) {
-        for (int b = 0; b < 64; b++) {
-            current.data[a][b] = add(current.data[a][b], gradient.data[a][b] >> 3);
+    for (int a = 0; a < 64; a++) {
+        for (int b = 0; b < 784; b++) {
+            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], 0xFF));
         }
     }
     return current;
 }
 Matrix32 readd_m32(Matrix32 current, Matrix32 gradient) {
-    for (int a = 0; a < 64; a++) {
-        for (int b = 0; b < 32; b++) {
-            current.data[a][b] = add(current.data[a][b], gradient.data[a][b] >> 3);
+    for (int a = 0; a < 32; a++) {
+        for (int b = 0; b < 64; b++) {
+            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
         }
     }
     return current;
 }
 Matrix10 readd_m10(Matrix10 current, Matrix10 gradient) {
-    for (int a = 0; a < 32; a++) {
-        for (int b = 0; b < 10; b++) {
-            current.data[a][b] = add(current.data[a][b], gradient.data[a][b] >> 3);
+    for (int a = 0; a < 10; a++) {
+        for (int b = 0; b < 32; b++) {
+            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
         }
     }
     return current;
 }
 
-
+#include <stdlib.h>
 // these are for testing purposes
 Matrix64 funky64() {
     Matrix64 matrix;
-    for (int a = 0; a < 784; a++) {
-        for (int b = 0; b < 64; b++) {
-            if ((a + b) % 500 == 0) { matrix.data[a][b] = 0x3F; }
-            else { matrix.data[a][b] = 0x00; }
+    for (int a = 0; a < 64; a++) {
+        for (int b = 0; b < 784; b++) {
+            // if ((a + b) % 500 == 0) { matrix.data[a][b] = 0x3F; }
+            // else { matrix.data[a][b] = 0x00; }
+            matrix.data[a][b] = rand() >> 26;
         };
     }
     return matrix;
 }
 Matrix32 funky32() {
     Matrix32 matrix;
-    for (int a = 0; a < 64; a++) {
-        for (int b = 0; b < 32; b++) {
-            if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x3F; }
-            else { matrix.data[a][b] = 0x03; }
+    for (int a = 0; a < 32; a++) {
+        for (int b = 0; b < 64; b++) {
+            // if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x3F; }
+            // else { matrix.data[a][b] = 0x03; }
+            matrix.data[a][b] = rand() >> 26;
         };
     }
     return matrix;
 }
 Matrix10 funky10() {
     Matrix10 matrix;
-    for (int a = 0; a < 32; a++) {
-        for (int b = 0; b < 10; b++) {
-            if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x3F; }
-            else { matrix.data[a][b] = 0x20; }
+    for (int a = 0; a < 10; a++) {
+        for (int b = 0; b < 32; b++) {
+            // if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x3F; }
+            // else { matrix.data[a][b] = 0x20; }
+            matrix.data[a][b] = rand() >> 26;
         };
     }
     return matrix;

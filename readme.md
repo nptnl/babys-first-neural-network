@@ -176,7 +176,7 @@ Its training converges in some random negative value (but not the minimum) for e
 
 I just arbitrarily changed the initial Lumens and... it just worked **it just worked** it just trained itself it just **trained and like** it did the
 
-<img src="image/05/five.png" width=60%>
+<img src="image/05/five.png" width=30%>
 
 I mean, it's not doing particularly well, but it *does* seem like there is a *preference* for the number 5 here—which is the goal.
 I'm training it to tell me "five! hooray!" everytime.
@@ -198,3 +198,25 @@ But in theory, I should already have nonlinearity, right?
 Because my modified addition basically runs $f(x) = \max(-127, x)$ and $f(x) = \min(127, x)$.
 But maybe I need more.
 I don't know.
+For now, I just added some comments to the code so it's more readable.
+
+### Day 7:
+
+I've been reading Genesis recently so maybe I'm not gonna do anything today.
+
+### Day 8 (about two months later):
+
+After my day of rest I realized that the way the model calculates gradients is broken.
+As in, when we need the judgement to be more 5 and less everything else, the pattern we get on the Lumen Three matrix doesn't match up.
+
+<img src="image/08/diagonal.png" width=60%>
+
+So I went through my matrix math and made sure the indices all match up and use the same conventions.
+
+<img src="image/08/straight.png" width=60%>
+
+Now we get a straight-line pattern (we're lighting up all the edges that feed into 5 in the judgement), but it still isn't fixing itself.
+With that, and a few calibrations to the starting values and learning rate, **we have five!**
+This is **huge news.**
+
+<img src="image/08/win5.png" width=20%>

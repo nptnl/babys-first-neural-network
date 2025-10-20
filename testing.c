@@ -9,9 +9,21 @@ typedef struct {
     Matrix10 lumen3;
 } Network;
 
+
+int print_vectors(Vector784 retina, Vector64 hidden1, Vector32 hidden2, Vector10 judgement) {
+    printf("retina\n");
+    show_retina(retina);
+    printf("hidden1\n");
+    show_hidden1(hidden1);
+    printf("hidden2\n");
+    show_hidden2(hidden2);
+    printf("judgement\n");
+    display_judgement(judgement);
+}
+
 Network train(Network current, Vector784 retina, unsigned char answer) {
 
-    for (int a = 0; a < 10000; a ++) {
+    for (int a = 0; a < 1000; a ++) {
     // forward propagation
     Vector64 hidden1 = lumen_one(retina, current.lumen1);
     Vector32 hidden2 = lumen_two(hidden1, current.lumen2);
@@ -25,38 +37,28 @@ Network train(Network current, Vector784 retina, unsigned char answer) {
     Vector64 grad_hidden1 = diff_hidden1(current.lumen2, hidden2);
     Matrix64 grad_lumen1 = diff_lumen_one(retina, grad_hidden1);
 
-    if (a % 1000 == 0) {
-    printf("----- judgement ------\n");
-    display_judgement(judgement);
-    // printf("------ ∇ judgement ------\n");
-    // display_judgement(grad_judgement);
-    //     printf("----- Lumen Three ------\n");
-    // show_lumen3(current.lumen3);
-    }
+    // if (a % 1000 == 0) {
+    // printf("----- judgement ------\n");
+    // display_judgement(judgement);
+    // // printf("------ ∇ judgement ------\n");
+    // // display_judgement(grad_judgement);
+    // //     printf("----- Lumen Three ------\n");
+    // // show_lumen3(current.lumen3);
+    // }
 
     // readjust weights
     current.lumen1 = readd_m64(current.lumen1, grad_lumen1);
     current.lumen2 = readd_m32(current.lumen2, grad_lumen2);
     current.lumen3 = readd_m10(current.lumen3, grad_lumen3);
 
+    if (a == 999) {
+        print_vectors(retina, hidden1, hidden2, judgement);
+    }
+
     }
 
     return current;
 }
-
-
-void test() {
-    char x = -0x60;
-    char y = 0x30;
-    plothex(x);
-    plothex(x >> 1);
-    plothex(x >> 2);
-    plothex(x >> 3);
-    plothex(x >> 4);
-}
-
-// .30 × .20
-// .06
 
 
 int main() {
@@ -69,6 +71,7 @@ int main() {
     ImageAndLabel input = get_one_input();
 
     baby = train(baby, input.image, input.label);
+
 
     // test();
     return 0;

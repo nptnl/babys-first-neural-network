@@ -54,7 +54,6 @@ void display_judgement(Vector10 layer) {
 void show_lumen3(Matrix10 weights) {
     for (int a = 0; a < 10; a ++) {
         for (int b = 0; b < 32; b ++) {
-            // plothex(weights.data[a][b]);
             plothex(weights.data[a][b]);
         }
         printf("\n");
