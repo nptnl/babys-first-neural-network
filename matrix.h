@@ -17,12 +17,12 @@ char add(char lhs, char rhs) {
 // this becomes 0x20 * 0x30 → 0x06
 char mul(char lhs, char rhs) {
     short product = lhs * rhs;
-    return product >> 8;
+    return product >> 7;
 }
 // special multiplication because retina neurons are different type
 char mul_retina(unsigned char neuron, char weight) {
-    short product = neuron * weight;
-    return product >> 9;
+    short product = (neuron >> 1) * weight;
+    return product >> 7;
 }
 
 // the neuron layer structures
@@ -64,7 +64,7 @@ Vector64 lumen_one(Vector784 before, Matrix64 mapping) {
         for (int b = 0; b < 784; b++) {
             after.data[a] = add(after.data[a], mul_retina(before.data[b], mapping.data[a][b]));
         }
-        if (after.data[a] < 0x00) { after.data[a] = 0x00; }
+        // if (after.data[a] < 0x00) { after.data[a] = 0x00; }
     }
     return after;
 }
@@ -75,7 +75,7 @@ Vector32 lumen_two(Vector64 before, Matrix32 mapping) {
         for (int b = 0; b < 64; b++) {
             after.data[a] = add(after.data[a], mul(before.data[b], mapping.data[a][b]));
         }
-        if (after.data[a] < 0x00) { after.data[a] = 0x00; }
+        // if (after.data[a] < 0x00) { after.data[a] = 0x00; }
     }
     return after;
 }
@@ -91,13 +91,27 @@ Vector10 lumen_three(Vector32 before, Matrix10 mapping) {
     return after;
 }
 
-static char LEARNRATE = 0x60;
+
+// LEARNRATE is a multiplier on the gradient
+static char LEARNRATE = 0x7F;
+// LEARNBUFF is a limit on the overall adjustment in terms of the distance between x and the endpoint (0x7F or -0x7F)
+static char LEARNBUFF = 0x40;
+
+char max_adjust(char cur, char grad) {
+    char max_pos = mul(add(-cur, 0x7F), LEARNBUFF);
+    char max_neg = mul(add(-cur, -0x7F), LEARNBUFF);
+    char adjust = mul(grad, LEARNRATE);
+    if (adjust > max_pos) { adjust = max_pos; }
+    if (adjust < max_neg) { adjust = max_neg; }
+    return add(cur, adjust);
+}
 
 // these add a scaled-down gradient to the edgeweights in the matrices
 Matrix64 readd_m64(Matrix64 current, Matrix64 gradient) {
     for (int a = 0; a < 64; a++) {
         for (int b = 0; b < 784; b++) {
-            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], 0xFF));
+            // current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
+            current.data[a][b] = max_adjust(current.data[a][b], gradient.data[a][b]);
         }
     }
     return current;
@@ -105,7 +119,8 @@ Matrix64 readd_m64(Matrix64 current, Matrix64 gradient) {
 Matrix32 readd_m32(Matrix32 current, Matrix32 gradient) {
     for (int a = 0; a < 32; a++) {
         for (int b = 0; b < 64; b++) {
-            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
+            // current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
+            current.data[a][b] = max_adjust(current.data[a][b], gradient.data[a][b]);
         }
     }
     return current;
@@ -113,7 +128,8 @@ Matrix32 readd_m32(Matrix32 current, Matrix32 gradient) {
 Matrix10 readd_m10(Matrix10 current, Matrix10 gradient) {
     for (int a = 0; a < 10; a++) {
         for (int b = 0; b < 32; b++) {
-            current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
+            // current.data[a][b] = add(current.data[a][b], mul(gradient.data[a][b], LEARNRATE));
+            current.data[a][b] = max_adjust(current.data[a][b], gradient.data[a][b]);
         }
     }
     return current;
@@ -125,9 +141,8 @@ Matrix64 funky64() {
     Matrix64 matrix;
     for (int a = 0; a < 64; a++) {
         for (int b = 0; b < 784; b++) {
-            // if ((a + b) % 500 == 0) { matrix.data[a][b] = 0x3F; }
-            // else { matrix.data[a][b] = 0x00; }
-            matrix.data[a][b] = rand() >> 26;
+            matrix.data[a][b] = rand() >> 28;
+            // if ((a + b) % 4 == 1) { matrix.data[a][b] = -matrix.data[a][b]; }
         };
     }
     return matrix;
@@ -136,9 +151,8 @@ Matrix32 funky32() {
     Matrix32 matrix;
     for (int a = 0; a < 32; a++) {
         for (int b = 0; b < 64; b++) {
-            // if ((a + b) % 20 == 0) { matrix.data[a][b] = 0x3F; }
-            // else { matrix.data[a][b] = 0x03; }
             matrix.data[a][b] = rand() >> 26;
+            // if ((a + b) % 4 == 1) { matrix.data[a][b] = -matrix.data[a][b]; }
         };
     }
     return matrix;
@@ -147,9 +161,8 @@ Matrix10 funky10() {
     Matrix10 matrix;
     for (int a = 0; a < 10; a++) {
         for (int b = 0; b < 32; b++) {
-            // if ((a + b) % 2 == 0) { matrix.data[a][b] = 0x3F; }
-            // else { matrix.data[a][b] = 0x20; }
             matrix.data[a][b] = rand() >> 26;
+            // if ((a + b) % 4 == 1) { matrix.data[a][b] = -matrix.data[a][b]; }
         };
     }
     return matrix;

@@ -44,3 +44,30 @@ ImageAndLabel get_one_input() {
     fclose(label);
     return output;
 }
+
+ImageAndLabel get_next(FILE *train, FILE *label) {
+    Vector784 image;
+    unsigned char solution[1];
+    burn_retina(train, image.data);
+    peek_label(label, solution);
+    ImageAndLabel output = {.image = image, .label = solution[0] };
+    return output;
+}
+
+void spam() {
+    FILE *train;
+    FILE *label;
+    train = fopen("./training*", "rb");
+    label = fopen("./labels*", "rb");
+    get_headers(train, label);
+
+    Vector784 image;
+    unsigned char solution[1];
+    for (int each = 0; each < 40; each ++) {
+        burn_retina(train, image.data);
+        peek_label(label, solution);
+        show_retina(image);
+    }
+    fclose(train);
+    fclose(label);
+}

@@ -198,7 +198,6 @@ But in theory, I should already have nonlinearity, right?
 Because my modified addition basically runs $f(x) = \max(-127, x)$ and $f(x) = \min(127, x)$.
 But maybe I need more.
 I don't know.
-For now, I just added some comments to the code so it's more readable.
 
 ### Day 7:
 
@@ -220,3 +219,32 @@ With that, and a few calibrations to the starting values and learning rate, **we
 This is **huge news.**
 
 <img src="image/08/win5.png" width=20%>
+
+### Day 9
+
+I just found what I hope is the root of all my suffering over the past several days.
+You know how my edgeweights have this problem where they converge to `0x7F` or `-0x7F`, and then basically the whole network breaks down because these values are useless?
+Well you see, my multiplication has been broken the whole time.
+Yeah... my `mul(_,_)` function multiplies `0x7F * 0x7F == 0x3F`.
+This should be like `0x7E` or something!
+I don't know if fixing this will even solve my problem, but it's still pretty dumb of me.
+
+The only reason I discovered this anyway is because I'm implementing something which just might fix our `-0x7F` problem (which is also called **weight saturation**).
+The deal is, instead of just capping our operations at the minimum and maximum possible value—the cause of weight saturation—I'm going to try and build a "smooth" transition towards higher values.
+Losers who work with normal floating point numbers use a *sigmoid function*, or something that looks like this:
+
+<img src="image/09/sigmoid.png" width=100%>
+
+Running this function on your edgeweights when you gradient-adjust them makes sure things don't get out-of-control.
+But I don't have access to that kind of fancy math.
+I mean, I could implement it, but my intuition tells me it would *not* work as planned.
+So my approach is the following:
+We find out the distance between `0x7F` and our value $x$, and the distance between $x$ and `-0x7F` as well. 
+Now, depending on the direction of the gradient adjustment, we only allow ourselves to cover *half* of the distance between $x$ and one of these endpoints.
+In that way, as $x$ approaches the min or the max, it will *slow down* as it does so.
+Which means our gradients continue to have meaning.
+
+<img src="image/09/halving.jpeg" width=40%>
+
+In principle, there's nothing special about the one-half number either.
+We can, say, only allow $x$ to be perturbed by one sixteenth the distance between it and the endpoint.
