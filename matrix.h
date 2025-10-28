@@ -56,6 +56,10 @@ typedef struct {
     char data[10][32];
 } Matrix10;
 
+Matrix64 ZERO_64 = { {0} };
+Matrix32 ZERO_32 = { {0} };
+Matrix10 ZERO_10 = { {0} };
+
 // next three functions are just matrix multiplication at different scales
 Vector64 lumen_one(Vector784 before, Matrix64 mapping) {
     Vector64 after;
@@ -93,7 +97,7 @@ Vector10 lumen_three(Vector32 before, Matrix10 mapping) {
 
 
 // LEARNRATE is a multiplier on the gradient
-static char LEARNRATE = 0x7F;
+static char LEARNRATE = 0x40;
 // LEARNBUFF is a limit on the overall adjustment in terms of the distance between x and the endpoint (0x7F or -0x7F)
 static char LEARNBUFF = 0x40;
 
